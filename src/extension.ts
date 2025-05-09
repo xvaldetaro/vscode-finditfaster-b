@@ -81,6 +81,12 @@ const commands: { [key: string]: Command } = {
         preRunCallback: undefined,
         postRunCallback: undefined,
     },
+    extractReferences: {
+        script: 'extract_references', // This is a dummy script name since we'll execute directly via Node
+        uri: undefined,
+        preRunCallback: undefined,
+        postRunCallback: undefined,
+    },
 };
 
 type WhenCondition = 'always' | 'never' | 'noWorkspaceOnly';
@@ -284,6 +290,9 @@ function setupConfig(context: vscode.ExtensionContext) {
     commands.linkFile.uri = localScript(commands.linkFile.script);
     commands.listSearchLocations.uri = localScript(commands.listSearchLocations.script);
     commands.flightCheck.uri = localScript(commands.flightCheck.script);
+
+    // For extractReferences, we don't need an actual script since we're executing it directly in executeExtractReferences
+    commands.extractReferences.uri = vscode.Uri.file(path.join(context.extensionPath, 'out', 'extract_references.js'));
 }
 
 /** Register the commands we defined with VS Code so users have access to them */
@@ -586,18 +595,30 @@ function reinitialize() {
 }
 
 /**
+ * Gets the base path for relative paths based on configuration
+ * @returns The base path to use for relative paths
+ */
+function getBasePath(): string {
+    if (CFG.linkFileBasePath) {
+        // Use the custom base path if specified
+        return CFG.linkFileBasePath;
+    } else if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+        // Use the first workspace folder as the base path
+        return vscode.workspace.workspaceFolders[0].uri.fsPath;
+    }
+    // Fall back to empty string if no base path is available
+    return '';
+}
+
+/**
  * Converts an absolute file path to a relative path based on the base path
  * @param filePath The absolute file path
  * @returns The relative file path
  */
 function getRelativePath(filePath: string): string {
-    if (CFG.linkFileBasePath) {
-        // Use the custom base path if specified
-        return path.relative(CFG.linkFileBasePath, filePath);
-    } else if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-        // Use the first workspace folder as the base path
-        const workspacePath = vscode.workspace.workspaceFolders[0].uri.fsPath;
-        return path.relative(workspacePath, filePath);
+    const basePath = getBasePath();
+    if (basePath) {
+        return path.relative(basePath, filePath);
     }
     // Fall back to absolute path if no base path is available
     return filePath;
@@ -625,8 +646,7 @@ function openFiles(data: string) {
                     }
 
                     // For multiple files, add a newline between them (except the first one)
-                    const textToInsert = index === 0 ? file : '\n' + file;
-                    editBuilder.insert(editor.selection.active, "`" + textToInsert + "`");
+                    editBuilder.insert(editor.selection.active, "`" + file + "`");
                 });
             });
         } else {
@@ -830,12 +850,95 @@ function getIgnoreString() {
     return globs.reduce((x, y) => x + `${y}:`, '');
 }
 
+/**
+ * Runs the extract_references tool on the current file
+ */
+async function executeExtractReferences() {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        vscode.window.showErrorMessage('No active editor found. Please open a file first.');
+        return;
+    }
+
+    const sourceFilePath = editor.document.uri.fsPath;
+
+    // Create target file path by adding '.prompt' before the extension
+    const parsedPath = path.parse(sourceFilePath);
+    const targetFilePath = path.join(
+        parsedPath.dir,
+        `${parsedPath.name}.prompt${parsedPath.ext}`
+    );
+
+    // Get the path to the compiled extract_references.js script
+    const extractReferencesPath = path.join(CFG.extensionPath, 'out', 'extract_references.js');
+
+    // Check if the script exists
+    if (!fs.existsSync(extractReferencesPath)) {
+        vscode.window.showErrorMessage(`Error: extract_references.js not found at ${extractReferencesPath}. Make sure the extension has been compiled.`);
+        return;
+    }
+
+    // Save the current file if it has unsaved changes
+    if (editor.document.isDirty) {
+        await editor.document.save();
+    }
+
+    // Create a terminal and run the command
+    if (!term || term.exitStatus !== undefined) {
+        createTerminal();
+        if (os.platform() !== 'win32') {
+            term.sendText('bash');
+            term.sendText('export PS1="::: Terminal allocated for FindItFaster. Do not use. ::: "; clear');
+        }
+    }
+
+    // Build the command to run extract_references script with node
+    let command = `node "${extractReferencesPath}" "${sourceFilePath}" "${targetFilePath}"`;
+
+    term.sendText('asdfr pathFormat:' + CFG.linkFilePathFormat);
+    // If linkFile is configured to use relative paths, add the base path parameter
+    if (CFG.linkFilePathFormat === 'relative') {
+        const basePath = getBasePath();
+        term.sendText('asdfr basePath:' + basePath);
+        if (basePath) {
+            command += ` --base-path "${basePath}"`;
+        }
+    }
+
+    term.sendText(command);
+    term.show();
+
+    // Check if target file already exists
+    const targetFileExists = fs.existsSync(targetFilePath);
+
+    // Customize the message based on whether we're creating or overwriting
+    const action = targetFileExists ? "Overwriting" : "Creating";
+    vscode.window.showInformationMessage(`${action} file reference extraction: ${path.basename(targetFilePath)}`);
+
+    // Open the target file when it's created
+    const checkFile = setInterval(() => {
+        if (fs.existsSync(targetFilePath)) {
+            clearInterval(checkFile);
+            vscode.window.showTextDocument(vscode.Uri.file(targetFilePath));
+        }
+    }, 500);
+
+    // Clear the interval after 10 seconds to avoid waiting forever
+    setTimeout(() => clearInterval(checkFile), 10000);
+}
+
 async function executeTerminalCommand(cmd: string) {
     getIgnoreGlobs();
     if (!CFG.flightCheckPassed && !CFG.disableStartupChecks) {
         if (!reinitialize()) {
             return;
         }
+    }
+
+    // Special case for extract references command
+    if (cmd === "extractReferences") {
+        executeExtractReferences();
+        return;
     }
 
     // Set linkFile mode flag if it's the linkFile command

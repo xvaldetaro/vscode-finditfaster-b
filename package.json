@@ -37,7 +37,8 @@
     "onCommand:find-it-faster.findWithinFiles",
     "onCommand:find-it-faster.findWithinFilesWithType",
     "onCommand:find-it-faster.linkFile",
-    "onCommand:find-it-faster.listSearchLocations"
+    "onCommand:find-it-faster.listSearchLocations",
+    "onCommand:find-it-faster.extractReferences"
   ],
   "main": "./out/extension.js",
   "bin": {
@@ -72,6 +73,10 @@
       {
         "command": "find-it-faster.resumeSearch",
         "title": "Find It Faster: resume last search"
+      },
+      {
+        "command": "find-it-faster.extractReferences",
+        "title": "Find It Faster: extract file references"
       }
     ],
     "keybindings": [
@@ -95,6 +100,12 @@
         "mac": "cmd+2",
         "linux": "ctrl+2",
         "win": "ctrl+2"
+      },
+      {
+        "command": "find-it-faster.extractReferences",
+        "mac": "cmd+3",
+        "linux": "ctrl+3",
+        "win": "ctrl+3"
       }
     ],
     "configuration": {
