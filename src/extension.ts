@@ -57,6 +57,12 @@ const commands: { [key: string]: Command } = {
         preRunCallback: selectTypeFilter,
         postRunCallback: () => { CFG.useTypeFilter = false; },
     },
+    linkFile: {
+        script: 'find_files',  // reuse the same script as findFiles
+        uri: undefined,
+        preRunCallback: undefined,
+        postRunCallback: undefined,
+    },
     listSearchLocations: {
         script: 'list_search_locations',
         uri: undefined,
@@ -161,6 +167,8 @@ async function selectTypeFilter() {
 }
 
 /** Global variable cesspool erm, I mean, Configuration Data Structure! It does the job for now. */
+type PathFormat = 'absolute' | 'relative';
+
 interface Config {
     extensionName: string | undefined,
     searchPaths: string[],
@@ -204,6 +212,9 @@ interface Config {
     useTerminalInEditor: boolean,
     shellPathForTerminal: string,
     shellArgsForTerminal: string[] | undefined,
+    isLinkFileMode: boolean,
+    linkFilePathFormat: PathFormat,
+    linkFileBasePath: string,
 };
 const CFG: Config = {
     extensionName: undefined,
@@ -248,6 +259,9 @@ const CFG: Config = {
     useTerminalInEditor: false,
     shellPathForTerminal: '',
     shellArgsForTerminal: undefined,
+    isLinkFileMode: false,
+    linkFilePathFormat: 'absolute',
+    linkFileBasePath: '',
 };
 
 /** Ensure that whatever command we expose in package.json actually exists */
@@ -267,6 +281,7 @@ function setupConfig(context: vscode.ExtensionContext) {
     commands.findFilesWithType.uri = localScript(commands.findFiles.script);
     commands.findWithinFiles.uri = localScript(commands.findWithinFiles.script);
     commands.findWithinFilesWithType.uri = localScript(commands.findWithinFiles.script);
+    commands.linkFile.uri = localScript(commands.linkFile.script);
     commands.listSearchLocations.uri = localScript(commands.listSearchLocations.script);
     commands.flightCheck.uri = localScript(commands.flightCheck.script);
 }
@@ -345,6 +360,8 @@ function updateConfigWithUserSettings() {
     CFG.useTerminalInEditor = getCFG('general.useTerminalInEditor');
     CFG.shellPathForTerminal = getCFG('general.shellPathForTerminal');
     CFG.shellArgsForTerminal = getCFG('general.shellArgsForTerminal');
+    CFG.linkFilePathFormat = getCFG('linkFile.pathFormat');
+    CFG.linkFileBasePath = getCFG('linkFile.basePath');
 }
 
 function collectSearchLocations() {
@@ -568,26 +585,62 @@ function reinitialize() {
     return true;
 }
 
+/**
+ * Converts an absolute file path to a relative path based on the base path
+ * @param filePath The absolute file path
+ * @returns The relative file path
+ */
+function getRelativePath(filePath: string): string {
+    if (CFG.linkFileBasePath) {
+        // Use the custom base path if specified
+        return path.relative(CFG.linkFileBasePath, filePath);
+    } else if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+        // Use the first workspace folder as the base path
+        const workspacePath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+        return path.relative(workspacePath, filePath);
+    }
+    // Fall back to absolute path if no base path is available
+    return filePath;
+}
+
 /** Interpreting the terminal output and turning them into a vscode command */
 function openFiles(data: string) {
     const filePaths = data.split('\n').filter(s => s !== '');
     assert(filePaths.length > 0);
+
+    // Handle linkFile mode - insert file path at cursor instead of opening file
+    if (CFG.isLinkFileMode) {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            editor.edit(editBuilder => {
+                // Insert each file path at the cursor position
+                // Note: For multiple files, they'll be inserted one after another
+                filePaths.forEach((p, index) => {
+                    let [file] = p.split(':', 1);
+                    file = file.trim();
+
+                    // Convert to relative path if configured
+                    if (CFG.linkFilePathFormat === 'relative') {
+                        file = getRelativePath(file);
+                    }
+
+                    // For multiple files, add a newline between them (except the first one)
+                    const textToInsert = index === 0 ? file : '\n' + file;
+                    editBuilder.insert(editor.selection.active, "`" + textToInsert + "`");
+                });
+            });
+        } else {
+            vscode.window.showErrorMessage('No active text editor to insert file path');
+        }
+
+        // Reset the link file mode
+        CFG.isLinkFileMode = false;
+        return;
+    }
+
+    // Regular mode - open the files
     filePaths.forEach(p => {
         let [file, lineTmp, charTmp] = p.split(':', 3);
-        // TODO: We might want to just do this the RE way on all platforms?
-        //       On Windows at least the c: makes the split approach problematic.
-        if (os.platform() === 'win32') {
-            let re = /^\s*(?<file>([a-zA-Z][:])?[^:]+)([:](?<lineTmp>\d+))?\s*([:](?<charTmp>\d+))?.*/;
-            let v = p.match(re);
-            if (v && v.groups) {
-                file = v.groups['file'];
-                lineTmp = v.groups['lineTmp'];
-                charTmp = v.groups['charTmp'];
-                //vscode.window.showWarningMessage('File: ' + file + "\nlineTmp: " + lineTmp + "\ncharTmp: " + charTmp);
-            } else {
-                vscode.window.showWarningMessage('Did not match anything in filename: [' + p + "] could not open file!");
-            }
-        }
         // On windows we sometimes get extra characters that confound
         // the file lookup.
         file = file.trim();
@@ -785,6 +838,9 @@ async function executeTerminalCommand(cmd: string) {
         }
     }
 
+    // Set linkFile mode flag if it's the linkFile command
+    CFG.isLinkFileMode = (cmd === "linkFile");
+
     if (cmd === "resumeSearch") {
         // Run the last-run command again
         if (os.platform() === 'win32') {
@@ -798,7 +854,7 @@ async function executeTerminalCommand(cmd: string) {
         commands["resumeSearch"].uri = commands[CFG.lastCommand].uri;
         commands["resumeSearch"].preRunCallback = commands[CFG.lastCommand].preRunCallback;
         commands["resumeSearch"].postRunCallback = commands[CFG.lastCommand].postRunCallback;
-    } else if (cmd.startsWith("find")) { // Keep track of last-run cmd, but we don't want to resume `listSearchLocations` etc
+    } else if (cmd.startsWith("find") || cmd === "linkFile") { // Keep track of last-run cmd, but we don't want to resume `listSearchLocations` etc
         CFG.lastCommand = cmd;
     }
 

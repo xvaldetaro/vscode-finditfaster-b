@@ -36,6 +36,7 @@
     "onCommand:find-it-faster.findFilesWithType",
     "onCommand:find-it-faster.findWithinFiles",
     "onCommand:find-it-faster.findWithinFilesWithType",
+    "onCommand:find-it-faster.linkFile",
     "onCommand:find-it-faster.listSearchLocations"
   ],
   "main": "./out/extension.js",
@@ -56,6 +57,10 @@
       {
         "command": "find-it-faster.findWithinFilesWithType",
         "title": "Find It Faster: search within files (with type filter)"
+      },
+      {
+        "command": "find-it-faster.linkFile",
+        "title": "Find It Faster: link file (insert path at cursor)"
       },
       {
         "command": "find-it-faster.listSearchLocations",
@@ -81,11 +86,35 @@
         "command": "find-it-faster.findWithinFilesWithType",
         "mac": "ctrl+cmd+shift+u",
         "linux": "ctrl+shift+alt+u"
+      },
+      {
+        "command": "find-it-faster.linkFile",
+        "mac": "cmd+2",
+        "linux": "ctrl+2",
+        "win": "ctrl+2"
       }
     ],
     "configuration": {
       "title": "FindItFaster",
       "properties": {
+        "find-it-faster.linkFile.pathFormat": {
+          "markdownDescription": "Format of the file path inserted when using 'Find It Faster: link file' command",
+          "type": "string",
+          "enum": [
+            "absolute",
+            "relative"
+          ],
+          "enumDescriptions": [
+            "Use absolute file paths (e.g., /home/user/project/src/file.ts)",
+            "Use paths relative to the base path (e.g., src/file.ts)"
+          ],
+          "default": "absolute"
+        },
+        "find-it-faster.linkFile.basePath": {
+          "markdownDescription": "Base path from which to calculate relative paths when 'linkFile.pathFormat' is set to 'relative'. If empty, the first workspace folder will be used.",
+          "type": "string",
+          "default": ""
+        },
         "find-it-faster.general.hideTerminalAfterSuccess": {
           "markdownDescription": "Extensions have limited control over the terminal panel. Ideally, it would be possible to automatically switch back to the previous thing you were doing (e.g. hide the terminal, show the terminal you're working on, show the tasks panel if that's what you were on), but we can't. Select here whether you want the terminal to be hidden or remain shown after invoking a command that fails / is canceled.",
           "type": "boolean",
