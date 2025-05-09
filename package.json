@@ -40,6 +40,9 @@
     "onCommand:find-it-faster.listSearchLocations"
   ],
   "main": "./out/extension.js",
+  "bin": {
+    "extract-references": "./out/extract_references.js"
+  },
   "contributes": {
     "commands": [
       {
@@ -277,6 +280,7 @@
     "test": "node ./out/test/runTest.js",
     "vscode:package": "vsce package --githubBranch main",
     "vscode:publish": "vsce publish --githubBranch main",
+    "postcompile": "chmod +x ./out/extract_references.js",
     "minimist": ">=1.2.6",
     "qs": ">=6.10.3",
     "ansi-regex": ">=5.0.1",
