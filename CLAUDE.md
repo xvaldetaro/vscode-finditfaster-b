@@ -22,6 +22,10 @@ For the new command:
 3. Modified `executeTerminalCommand()` to set this flag when the command is executed
 4. Enhanced `openFiles()` to insert the file path at cursor instead of opening the file when in link file mode
 5. Updated package.json to register the new command with VS Code
+6. Added keyboard shortcut (cmd+2 on Mac, ctrl+2 on Windows/Linux)
+7. Added settings for path format (absolute vs relative) with options:
+   - `linkFile.pathFormat`: Choose between "absolute" or "relative" paths
+   - `linkFile.basePath`: Custom base path for relative paths (defaults to workspace folder)
 
 ### Testing in Development Window Issue
 
@@ -41,4 +45,4 @@ Instead of using the development window, package and install the extension:
 2. Test the extension in a regular VS Code window with a real workspace
 3. After making changes, run the script again and reload your VS Code windows
 
-The new command is available as "Find It Faster: link file (insert path at cursor)" in the Command Palette.
+The new command is available as "Find It Faster: link file (insert path at cursor)" in the Command Palette and via the keyboard shortcut cmd+2 (Mac) or ctrl+2 (Windows/Linux).
