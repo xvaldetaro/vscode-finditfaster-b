@@ -79,7 +79,7 @@
       },
       {
         "command": "ai-prompt-compiler.extractReferences",
-        "title": "AI Prompt Compiler: extract file references"
+        "title": "AI Prompt Compiler: compile prompt"
       },
       {
         "command": "ai-prompt-compiler.lineRangeCopy",

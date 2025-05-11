@@ -16,7 +16,7 @@ Default key bindings:
 - `cmd+shift+ctrl+u` / `ctrl+shift+alt+u` to search for text within files with type pre-filtering,
 - `cmd+2` / `ctrl+2` to insert file path at cursor,
 - `cmd+3` / `ctrl+3` to copy a line range reference to clipboard.
-- `cmd+4` / `ctrl+4` to extract file references from the current file,
+- `cmd+4` / `ctrl+4` to compile prompt with referenced file contents,
 
 You can change these using VS Code's keyboard shortcuts.
 
@@ -49,10 +49,10 @@ This extension exposes seven commands:
 1. **Search file** - Find and open files quickly using a combination of `fzf`, `rg`, and `bat`.
 2. **Search within files** - Find text within files and open the matches. Uses `fzf`, `rg`, and `bat`.
 3. **Search within files with type filter** - Like above, but limit searches to specific file types.
-4. **Link file** - Search for a file and insert its path (in `${path}` format) at the cursor position. Configure absolute or relative paths in settings.
+4. **Link file** - Search for a file and insert its path (in `${path}` format) at the cursor position. Supports both absolute and relative paths, configurable in settings. Essential for referencing code in your prompts.
 5. **Resume search** - Repeat the last command with the previous query pre-populated.
-6. **Extract file references** - Process a document containing file paths in `${path}` notation and create a compiled prompt document with all referenced file contents included.
-7. **Copy line range reference** - Copy a reference to the selected line range in the format `${/path/to/file.ext[33-45]}` to the clipboard. If no selection, it copies just the file path.
+6. **Compile prompt** - Transform a document containing file references (in `${path}` or `${path[line-range]}` format) into a complete prompt with all referenced code contents included. The resulting document is ready to be sent to AI models.
+7. **Copy line range reference** - Copy a reference to the selected line range in the format `${/path/to/file.ext[33-45]}` to the clipboard. Perfect for referencing specific sections of code. If no text is selected, it copies just the file path in `${path}` format.
 
 If your active text editor has a selection, it will be used as the initial query (you can disable
 this setting).
@@ -112,7 +112,7 @@ This extension facilitates a streamlined workflow for creating AI prompts with c
 1. **Create a prompt document** - Start with a document where you'll write your prompt to the AI
 2. **Reference files** - Use the "Link file" command (cmd+2/ctrl+2) to quickly insert file references in `${path}` format
 3. **Reference line ranges** - Use the "Copy line range reference" command (cmd+3/ctrl+3) to copy specific code sections
-4. **Compile the prompt** - Use the "Extract file references" command (cmd+4/ctrl+4) to generate a complete prompt with all referenced code
+4. **Compile the prompt** - Use the "Compile prompt" command (cmd+4/ctrl+4) to generate a complete prompt with all referenced code
 
 The compiled prompt file will have:
 
