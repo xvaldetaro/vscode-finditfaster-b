@@ -646,7 +646,7 @@ function openFiles(data: string) {
                     }
 
                     // For multiple files, add a newline between them (except the first one)
-                    editBuilder.insert(editor.selection.active, "`" + file + "`");
+                    editBuilder.insert(editor.selection.active, "${" + file + "}");
                 });
             });
         } else {

@@ -62,9 +62,9 @@ async function extractReferences(sourceFilePath: string, targetFilePath: string,
         // Read the source file
         const sourceContent = fs.readFileSync(sourceFilePath, 'utf8');
 
-        // Replace backtick paths with just the filenames
-        // Find all paths enclosed in backticks using regex - handle both absolute (/path/to/file) and relative (path/to/file) paths
-        const pathRegex = /\`([^`\n]+)\`/g;
+        // Replace ${path} patterns with just the filenames
+        // Find all paths enclosed in ${} using regex - handle both absolute (/path/to/file) and relative (path/to/file) paths
+        const pathRegex = /\${([^}]+)}/g;
         let match;
         const embeddedPaths: string[] = [];
 
@@ -72,7 +72,7 @@ async function extractReferences(sourceFilePath: string, targetFilePath: string,
         while ((match = pathRegex.exec(sourceContent)) !== null) {
             const pathFromMatch = match[1];
 
-            // Determine if this is a path and not just a code snippet
+            // Determine if this is a path and not just a code snippet or interpolation
             // Very basic heuristic: if it has file extension and no obvious code characters like (){}=
             if (path.extname(pathFromMatch) && !/[(){};=]/.test(pathFromMatch)) {
                 embeddedPaths.push(pathFromMatch);
@@ -84,7 +84,7 @@ async function extractReferences(sourceFilePath: string, targetFilePath: string,
             // Only replace if it's a file path we've identified
             if (embeddedPaths.includes(filePath)) {
                 const fileName = path.basename(filePath);
-                return `\`${fileName}\``;
+                return `\${${fileName}}`;
             }
             // Return unchanged if not a file path
             return match;

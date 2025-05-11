@@ -32,8 +32,8 @@ For the new command:
 I've also added a companion CLI tool to process documents with embedded file paths:
 
 1. The tool is implemented in TypeScript at `src/extract_references.ts`
-2. It processes a source file containing absolute paths in backticks and creates a target file where:
-   - Paths are replaced with just filenames (e.g., `/path/to/file.ts` becomes `file.ts`)
+2. It processes a source file containing absolute paths in ${} notation and creates a target file where:
+   - Paths are replaced with just filenames (e.g., `${/path/to/file.ts}` becomes `${file.ts}`)
    - A "File References" section is added at the end of the document
    - For each referenced file, the complete file contents are included
    - Code blocks use appropriate language hints for syntax highlighting based on file extension
@@ -73,13 +73,13 @@ I've also integrated the extract references tool as a VS Code command:
 2. Implemented the command to run the extract_references.ts script on the currently edited file
 3. It generates a target file with the same name as the source file but with ".prompt" added before the extension
 4. Added a keyboard shortcut (cmd+3 on Mac, ctrl+3 on Windows/Linux)
-5. Enhanced the script to support both absolute and relative paths in backticks
+5. Enhanced the script to support both absolute and relative paths in ${} notation
 6. The command respects the linkFile.pathFormat setting ('absolute' or 'relative')
 7. When 'relative' mode is active, it passes the base path to the script
 
 This command allows you to easily extract file references from any document by simply pressing the shortcut key while editing the file. It makes it convenient to use the extract references tool without having to manually run the CLI command.
 
 The extract references tool now works with:
-- Absolute paths (e.g., `/path/to/file.ts`)
-- Relative paths (e.g., `src/file.ts`)
+- Absolute paths (e.g., `${/path/to/file.ts}`)
+- Relative paths (e.g., `${src/file.ts}`)
 - Uses the same base path configuration as the "link file" command for consistency
