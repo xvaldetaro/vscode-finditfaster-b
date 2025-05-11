@@ -88,18 +88,28 @@ async function extractReferences(sourceFilePath: string, targetFilePath: string,
             }
         }
 
-        // Create the target content with replaced paths
+        // Create a set of files that actually exist
+        const existingFiles = new Set<string>();
+        for (const filePath of embeddedPaths) {
+            // Resolve the file path - if it's absolute, use it directly, if relative, resolve against basePath
+            const resolvedPath = path.isAbsolute(filePath) ? filePath : path.resolve(basePath, filePath);
+            if (fs.existsSync(resolvedPath)) {
+                existingFiles.add(filePath);
+            }
+        }
+
+        // Create the target content with replaced paths - only replace paths for files that exist
         let targetContent = sourceContent.replace(pathRegex, (match, filePath, startLine, endLine) => {
-            // Only replace if it's a file path we've identified
-            if (embeddedPaths.includes(filePath)) {
+            // Only replace if it's a file path we've identified AND the file exists
+            if (embeddedPaths.includes(filePath) && existingFiles.has(filePath)) {
                 const fileName = path.basename(filePath);
                 if (startLine && endLine) {
-                    return `\${${fileName}[${startLine}-${endLine}]}`;
+                    return `@${fileName}[${startLine}-${endLine}]`;
                 } else {
-                    return `\${${fileName}}`;
+                    return `@${fileName}`;
                 }
             }
-            // Return unchanged if not a file path
+            // Return unchanged if not a file path or file doesn't exist
             return match;
         });
 
