@@ -1,8 +1,8 @@
-This is a fork of the FindItFaster vscode extension. The main README.md explains how it works.
+This is a fork of the FindItFaster vscode extension, rebranded as AIPromptCompiler. The main README.md explains how it works.
 
 ## Implementation Summary
 
-I've added a new "link file" command to the FindItFaster VS Code extension. This command works similar to "search file" but instead of opening the selected file, it inserts the full path to the file at the current cursor position.
+I've added a new "link file" command to the AIPromptCompiler VS Code extension. This command works similar to "search file" but instead of opening the selected file, it inserts the full path to the file at the current cursor position.
 
 ### How the Extension Handles File Selection
 
@@ -63,13 +63,13 @@ Instead of using the development window, package and install the extension:
 2. Test the extension in a regular VS Code window with a real workspace
 3. After making changes, run the script again and reload your VS Code windows
 
-The link file command is available as "Find It Faster: link file (insert path at cursor)" in the Command Palette and via the keyboard shortcut cmd+2 (Mac) or ctrl+2 (Windows/Linux).
+The link file command is available as "AI Prompt Compiler: link file (insert path at cursor)" in the Command Palette and via the keyboard shortcut cmd+2 (Mac) or ctrl+2 (Windows/Linux).
 
 ### Extract References VS Code Command
 
 I've also integrated the extract references tool as a VS Code command:
 
-1. Added a command "Find It Faster: extract file references" in the extension
+1. Added a command "AI Prompt Compiler: extract file references" in the extension
 2. Implemented the command to run the extract_references.ts script on the currently edited file
 3. It generates a target file with the same name as the source file but with ".prompt" added before the extension
 4. Added a keyboard shortcut (cmd+3 on Mac, ctrl+3 on Windows/Linux)

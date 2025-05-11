@@ -596,7 +596,7 @@ function reinitialize() {
         if (eventType === 'change') {
             handleCanaryFileChange();
         } else if (eventType === 'rename') {
-            vscode.window.showErrorMessage(`Issue detected with extension ${CFG.extensionName}. You may have to reload it.`);
+            vscode.window.showErrorMessage(`Issue detected with AIPromptCompiler extension. You may have to reload it.`);
         }
     });
     return true;
@@ -754,12 +754,12 @@ function handleTerminalFocusRestore(commandWasSuccess: boolean) {
 
 function createTerminal() {
     const terminalOptions: vscode.TerminalOptions = {
-        name: 'F️indItFaster',
+        name: 'AIPromptCompiler',
         location: CFG.useTerminalInEditor ? vscode.TerminalLocation.Editor : vscode.TerminalLocation.Panel,
         hideFromUser: !CFG.useTerminalInEditor, // works only for terminal panel, not editor stage
         env: {
             /* eslint-disable @typescript-eslint/naming-convention */
-            FIND_IT_FASTER_ACTIVE: '1',
+            AI_PROMPT_COMPILER_ACTIVE: '1',
             HISTCONTROL: 'ignoreboth',  // bash
             // HISTORY_IGNORE: '*',        // zsh
             EXTENSION_PATH: CFG.extensionPath,
@@ -896,7 +896,7 @@ async function executeExtractReferences() {
         createTerminal();
         if (os.platform() !== 'win32') {
             term.sendText('bash');
-            term.sendText('export PS1="::: Terminal allocated for FindItFaster. Do not use. ::: "; clear');
+            term.sendText('export PS1="::: Terminal allocated for AIPromptCompiler. Do not use. ::: "; clear');
         }
     }
 
@@ -921,7 +921,7 @@ async function executeExtractReferences() {
 
     // Customize the message based on whether we're creating or overwriting
     const action = targetFileExists ? "Overwriting" : "Creating";
-    vscode.window.showInformationMessage(`${action} file reference extraction: ${path.basename(targetFilePath)}`);
+    vscode.window.showInformationMessage(`AIPromptCompiler: ${action} file reference extraction: ${path.basename(targetFilePath)}`);
 
     // Open the target file when it's created
     const checkFile = setInterval(() => {
@@ -976,7 +976,7 @@ async function executeLineRangeCopy() {
     vscode.env.clipboard.writeText(formattedText);
 
     // Show a notification
-    vscode.window.showInformationMessage(`Copied reference to clipboard: ${formattedText}`);
+    vscode.window.showInformationMessage(`AIPromptCompiler: Copied reference to clipboard: ${formattedText}`);
 }
 
 async function executeTerminalCommand(cmd: string) {
@@ -1023,7 +1023,7 @@ async function executeTerminalCommand(cmd: string) {
         createTerminal();
         if (os.platform() !== 'win32') {
             term.sendText('bash');
-            term.sendText('export PS1="::: Terminal allocated for FindItFaster. Do not use. ::: "; clear');
+            term.sendText('export PS1="::: Terminal allocated for AIPromptCompiler. Do not use. ::: "; clear');
         }
     }
 

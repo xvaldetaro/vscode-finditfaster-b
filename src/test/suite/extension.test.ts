@@ -41,14 +41,14 @@ suite('Extension Test Suite', () => {
 });
 
 async function doTheThings() {
-        const extension = vscode.extensions.getExtension('TomRijndorp.find-it-faster');
+        const extension = vscode.extensions.getExtension('TomRijndorp.ai-prompt-compiler');
         assert(extension);
         const path = extension.extensionPath;
         assert(path);
         // assert (vscode.workspace.workspaceFolders === undefined);
-    // vscode.workspace.getconfiguration().update('find-it-faster.general.defaultsearchlocation', __dirname, vscode.configurationtarget.global)
+    // vscode.workspace.getconfiguration().update('ai-prompt-compiler.general.defaultsearchlocation', __dirname, vscode.configurationtarget.global)
     // .then(() => {
-        vscode.commands.executeCommand('find-it-faster.listSearchLocations');
+        vscode.commands.executeCommand('ai-prompt-compiler.listSearchLocations');
     // })
     // .then(() => {
         // return vscode.window.activeTerminal?.sendText("flight_check.sh\n");

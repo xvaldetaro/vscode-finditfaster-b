@@ -1,24 +1,26 @@
 {
-  "name": "find-it-faster",
-  "displayName": "FindItFaster",
+  "name": "ai-prompt-compiler",
+  "displayName": "AIPromptCompiler",
   "publisher": "TomRijndorp",
   "icon": "media/icon.png",
   "repository": {
     "url": "https://github.com/tomrijndorp/vscode-finditfaster"
   },
-  "description": "Find it, but faster! Leveraging fzf and rg.",
+  "description": "Fast file navigation, referencing, and AI prompt compilation for large codebases.",
   "keywords": [
-    "ag",
+    "ai",
+    "prompt",
+    "compiler",
+    "references",
+    "file paths",
+    "code snippets",
     "bat",
     "batcat",
-    "find it faster",
     "files",
     "find",
     "finder",
     "fuzzy",
     "fzf",
-    "grep",
-    "open",
     "rg",
     "ripgrep",
     "search",
@@ -32,14 +34,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:find-it-faster.findFiles",
-    "onCommand:find-it-faster.findFilesWithType",
-    "onCommand:find-it-faster.findWithinFiles",
-    "onCommand:find-it-faster.findWithinFilesWithType",
-    "onCommand:find-it-faster.linkFile",
-    "onCommand:find-it-faster.listSearchLocations",
-    "onCommand:find-it-faster.extractReferences",
-    "onCommand:find-it-faster.lineRangeCopy"
+    "onCommand:ai-prompt-compiler.findFiles",
+    "onCommand:ai-prompt-compiler.findFilesWithType",
+    "onCommand:ai-prompt-compiler.findWithinFiles",
+    "onCommand:ai-prompt-compiler.findWithinFilesWithType",
+    "onCommand:ai-prompt-compiler.linkFile",
+    "onCommand:ai-prompt-compiler.listSearchLocations",
+    "onCommand:ai-prompt-compiler.extractReferences",
+    "onCommand:ai-prompt-compiler.lineRangeCopy"
   ],
   "main": "./out/extension.js",
   "bin": {
@@ -48,82 +50,82 @@
   "contributes": {
     "commands": [
       {
-        "command": "find-it-faster.findFiles",
-        "title": "Find It Faster: search file"
+        "command": "ai-prompt-compiler.findFiles",
+        "title": "AI Prompt Compiler: search file"
       },
       {
-        "command": "find-it-faster.findFilesWithType",
-        "title": "Find It Faster: search file (with type filter)"
+        "command": "ai-prompt-compiler.findFilesWithType",
+        "title": "AI Prompt Compiler: search file (with type filter)"
       },
       {
-        "command": "find-it-faster.findWithinFiles",
-        "title": "Find It Faster: search within files"
+        "command": "ai-prompt-compiler.findWithinFiles",
+        "title": "AI Prompt Compiler: search within files"
       },
       {
-        "command": "find-it-faster.findWithinFilesWithType",
-        "title": "Find It Faster: search within files (with type filter)"
+        "command": "ai-prompt-compiler.findWithinFilesWithType",
+        "title": "AI Prompt Compiler: search within files (with type filter)"
       },
       {
-        "command": "find-it-faster.linkFile",
-        "title": "Find It Faster: link file (insert path at cursor)"
+        "command": "ai-prompt-compiler.linkFile",
+        "title": "AI Prompt Compiler: link file (insert path at cursor)"
       },
       {
-        "command": "find-it-faster.listSearchLocations",
-        "title": "Find It Faster: list search locations (modify in extension settings)"
+        "command": "ai-prompt-compiler.listSearchLocations",
+        "title": "AI Prompt Compiler: list search locations (modify in extension settings)"
       },
       {
-        "command": "find-it-faster.resumeSearch",
-        "title": "Find It Faster: resume last search"
+        "command": "ai-prompt-compiler.resumeSearch",
+        "title": "AI Prompt Compiler: resume last search"
       },
       {
-        "command": "find-it-faster.extractReferences",
-        "title": "Find It Faster: extract file references"
+        "command": "ai-prompt-compiler.extractReferences",
+        "title": "AI Prompt Compiler: extract file references"
       },
       {
-        "command": "find-it-faster.lineRangeCopy",
-        "title": "Find It Faster: copy line range reference to clipboard"
+        "command": "ai-prompt-compiler.lineRangeCopy",
+        "title": "AI Prompt Compiler: copy line range reference to clipboard"
       }
     ],
     "keybindings": [
       {
-        "command": "find-it-faster.findFiles",
+        "command": "ai-prompt-compiler.findFiles",
         "mac": "cmd+shift+j",
         "linux": "ctrl+shift+j"
       },
       {
-        "command": "find-it-faster.findWithinFiles",
+        "command": "ai-prompt-compiler.findWithinFiles",
         "mac": "cmd+shift+u",
         "linux": "ctrl+shift+u"
       },
       {
-        "command": "find-it-faster.findWithinFilesWithType",
+        "command": "ai-prompt-compiler.findWithinFilesWithType",
         "mac": "ctrl+cmd+shift+u",
         "linux": "ctrl+shift+alt+u"
       },
       {
-        "command": "find-it-faster.linkFile",
+        "command": "ai-prompt-compiler.linkFile",
         "mac": "cmd+2",
         "linux": "ctrl+2",
         "win": "ctrl+2"
       },
       {
-        "command": "find-it-faster.extractReferences",
+        "command": "ai-prompt-compiler.extractReferences",
         "mac": "cmd+3",
         "linux": "ctrl+3",
         "win": "ctrl+3"
       },
       {
-        "command": "find-it-faster.lineRangeCopy",
+        "command": "ai-prompt-compiler.lineRangeCopy",
         "mac": "cmd+4",
         "linux": "ctrl+4",
         "win": "ctrl+4"
       }
     ],
     "configuration": {
-      "title": "FindItFaster",
+      "title": "AIPromptCompiler",
       "properties": {
-        "find-it-faster.linkFile.pathFormat": {
-          "markdownDescription": "Format of the file path inserted when using 'Find It Faster: link file' command",
+        "ai-prompt-compiler.linkFile.pathFormat": {
+          "markdownDescription": "Format of the file path inserted when using 'AI Prompt Compiler: link file' command",
           "type": "string",
           "enum": [
             "absolute",
@@ -135,52 +137,52 @@
           ],
           "default": "absolute"
         },
-        "find-it-faster.linkFile.basePath": {
+        "ai-prompt-compiler.linkFile.basePath": {
           "markdownDescription": "Base path from which to calculate relative paths when 'linkFile.pathFormat' is set to 'relative'. If empty, the first workspace folder will be used.",
           "type": "string",
           "default": ""
         },
-        "find-it-faster.general.hideTerminalAfterSuccess": {
+        "ai-prompt-compiler.general.hideTerminalAfterSuccess": {
           "markdownDescription": "Extensions have limited control over the terminal panel. Ideally, it would be possible to automatically switch back to the previous thing you were doing (e.g. hide the terminal, show the terminal you're working on, show the tasks panel if that's what you were on), but we can't. Select here whether you want the terminal to be hidden or remain shown after invoking a command that fails / is canceled.",
           "type": "boolean",
           "default": true
         },
-        "find-it-faster.general.hideTerminalAfterFail": {
+        "ai-prompt-compiler.general.hideTerminalAfterFail": {
           "markdownDescription": "Extensions have limited control over the terminal panel. Ideally, it would be possible to automatically switch back to the previous thing you were doing (e.g. hide the terminal, show the terminal you're working on, show the tasks panel if that's what you were on), but we can't. Select here whether you want the terminal to be hidden or remain shown after invoking a command that succeeds.",
           "type": "boolean",
           "default": true
         },
-        "find-it-faster.general.clearTerminalAfterUse": {
+        "ai-prompt-compiler.general.clearTerminalAfterUse": {
           "markdownDescription": "Sends a 'clear' command after invoking a terminal command for a cleaner look",
           "type": "boolean",
           "default": true
         },
-        "find-it-faster.general.killTerminalAfterUse": {
+        "ai-prompt-compiler.general.killTerminalAfterUse": {
           "markdownDescription": "Kills this extension's terminal such that your previous terminal gets back into focus. Comes with a performance penalty for creating a new terminal on every invocation.",
           "type": "boolean",
           "default": false
         },
-        "find-it-faster.general.showMaximizedTerminal": {
+        "ai-prompt-compiler.general.showMaximizedTerminal": {
           "markdownDescription": "Show the terminal in full screen. Works especially nicely if you set the \"hide after success / fail\" options in these preferences.",
           "type": "boolean",
           "default": false
         },
-        "find-it-faster.general.useGitIgnoreExcludes": {
+        "ai-prompt-compiler.general.useGitIgnoreExcludes": {
           "markdownDescription": "Use `.gitignore` entries (if present) to limit search paths",
           "type": "boolean",
           "default": true
         },
-        "find-it-faster.general.useWorkspaceSearchExcludes": {
+        "ai-prompt-compiler.general.useWorkspaceSearchExcludes": {
           "markdownDescription": "In order to speed up VS Code's native search functionality, you can use the `search.exclude` setting. If checked, this extension will honor the same exclude patterns (as long as they follow the standard \"gitignore glob style\" that `rg` uses.",
           "type": "boolean",
           "default": true
         },
-        "find-it-faster.general.additionalSearchLocations": {
+        "ai-prompt-compiler.general.additionalSearchLocations": {
           "markdownDescription": "Search files in these locations",
           "type": "array",
           "default": []
         },
-        "find-it-faster.general.additionalSearchLocationsWhen": {
+        "ai-prompt-compiler.general.additionalSearchLocationsWhen": {
           "markdownDescription": "When to search the files listed in `general.searchLocations`",
           "type": "string",
           "enum": [
@@ -195,12 +197,12 @@
           ],
           "default": "always"
         },
-        "find-it-faster.general.searchWorkspaceFolders": {
+        "ai-prompt-compiler.general.searchWorkspaceFolders": {
           "markdownDescription": "Search the folders defined in the workspace",
           "type": "boolean",
           "default": true
         },
-        "find-it-faster.general.searchCurrentWorkingDirectory": {
+        "ai-prompt-compiler.general.searchCurrentWorkingDirectory": {
           "markdownDescription": "Search the current working directory (`process.cwd()`)",
           "type": "string",
           "enum": [
@@ -215,77 +217,77 @@
           ],
           "default": "noWorkspaceOnly"
         },
-        "find-it-faster.general.batTheme": {
+        "ai-prompt-compiler.general.batTheme": {
           "markdownDescription": "The color theme to use for `bat` (see `bat --list-themes`)",
           "type": "string",
           "default": "1337"
         },
-        "find-it-faster.general.openFileInPreviewEditor": {
+        "ai-prompt-compiler.general.openFileInPreviewEditor": {
           "markdownDescription": "When set to `true` files open in a Preview Editor. Use in conjunction with the `workbench.editor.enablePreivew` setting.",
           "type": "boolean",
           "default": false
         },
-        "find-it-faster.findFiles.showPreview": {
+        "ai-prompt-compiler.findFiles.showPreview": {
           "markdownDescription": "Show a preview window when searching files",
           "type": "boolean",
           "default": true
         },
-        "find-it-faster.findFiles.previewCommand": {
+        "ai-prompt-compiler.findFiles.previewCommand": {
           "markdownDescription": "When populated: Used by `fzf` to produce the preview. Use `{}` to indicate the filename. Example: `bat {}`.",
           "type": "string",
           "default": ""
         },
-        "find-it-faster.findFiles.previewWindowConfig": {
+        "ai-prompt-compiler.findFiles.previewWindowConfig": {
           "markdownDescription": "When populated: Used by `fzf` to determine position and look of the preview window. See the `fzf` documentation. Example for a horizontal split: `top,50%`.",
           "type": "string",
           "default": ""
         },
-        "find-it-faster.findWithinFiles.showPreview": {
+        "ai-prompt-compiler.findWithinFiles.showPreview": {
           "markdownDescription": "Show a preview window when searching within files",
           "type": "boolean",
           "default": true
         },
-        "find-it-faster.findWithinFiles.previewCommand": {
+        "ai-prompt-compiler.findWithinFiles.previewCommand": {
           "markdownDescription": "When populated: Used by `fzf` to produce the preview when searching within files. Use `{1}` to indicate the filename, `{2}` for the line number. Example using `cat` and `awk` instead of `bat`: `cat {1} | awk '{if (NR>={2}) print}'`.",
           "type": "string",
           "default": ""
         },
-        "find-it-faster.findWithinFiles.previewWindowConfig": {
+        "ai-prompt-compiler.findWithinFiles.previewWindowConfig": {
           "markdownDescription": "When populated: Used by `fzf` to determine position and look of the preview window. See the `fzf` documentation. Example for a horizontal split: `top,50%,border-bottom,+{2}+3/3,~3`.",
           "type": "string",
           "default": ""
         },
-        "find-it-faster.findWithinFiles.fuzzRipgrepQuery": {
+        "ai-prompt-compiler.findWithinFiles.fuzzRipgrepQuery": {
           "markdownDescription": "By default, matching in \"Find Within Files\" is exact. Enabling this option relaxes the matching by slightly fuzzing the query that is sent to `rg`: it treats whitespaces as wildcards (`.*`). For example, when enabled, the query `function bar` will match `function foobar`. Otherwise, it won't. This setting does not work on Windows at the moment.",
           "type": "boolean",
           "default": false
         },
-        "find-it-faster.advanced.disableStartupChecks": {
+        "ai-prompt-compiler.advanced.disableStartupChecks": {
           "markdownDescription": "By default, we check that you have `fzf`, `rg`, and `bat` on your path. If you'd like to disable these checks because you're getting creative (e.g. use `cat` instead of `bat`), check this box. Obviously you may see errors on your terminal if we do call one of these programs when they are not present!",
           "type": "boolean",
           "default": false
         },
-        "find-it-faster.advanced.useEditorSelectionAsQuery": {
+        "ai-prompt-compiler.advanced.useEditorSelectionAsQuery": {
           "markdownDescription": "By default, if you have an active editor with a text selection, we'll use that to populate the prompt in `fzf` such that it will start filtering text directly. Uncheck to disable.",
           "type": "boolean",
           "default": true
         },
-        "find-it-faster.general.restoreFocusTerminal": {
+        "ai-prompt-compiler.general.restoreFocusTerminal": {
           "markdownDescription": "When enabled, the extension will restore focus to the previously active terminal after executing a command. This is useful if you frequently switch between the terminal and other parts of VS Code. Note: due to limitations in VS Code, will not focus other panel tabs such as problems/output/etc.",
           "type": "boolean",
           "default": false
         },
-        "find-it-faster.general.useTerminalInEditor": {
+        "ai-prompt-compiler.general.useTerminalInEditor": {
           "markdownDescription": "When enabled, the extension will create the terminal in the main editor stage.",
           "type": "boolean",
           "default": false
         },
-        "find-it-faster.general.shellPathForTerminal": {
+        "ai-prompt-compiler.general.shellPathForTerminal": {
           "markdownDescription": "Set the path for the shell (terminal type) to be used.",
           "type": "string",
           "default": ""
         },
-        "find-it-faster.general.shellArgsForTerminal": {
+        "ai-prompt-compiler.general.shellArgsForTerminal": {
           "markdownDescription": "Set the args for the shell (terminal type) to be used.",
           "type": "array | undefined",
           "default": "undefined"
