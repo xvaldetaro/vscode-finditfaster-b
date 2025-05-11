@@ -110,15 +110,15 @@
       },
       {
         "command": "ai-prompt-compiler.extractReferences",
-        "mac": "cmd+3",
-        "linux": "ctrl+3",
-        "win": "ctrl+3"
-      },
-      {
-        "command": "ai-prompt-compiler.lineRangeCopy",
         "mac": "cmd+4",
         "linux": "ctrl+4",
         "win": "ctrl+4"
+      },
+      {
+        "command": "ai-prompt-compiler.lineRangeCopy",
+        "mac": "cmd+3",
+        "linux": "ctrl+3",
+        "win": "ctrl+3"
       }
     ],
     "configuration": {

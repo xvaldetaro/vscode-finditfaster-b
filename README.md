@@ -15,8 +15,8 @@ Default key bindings:
 - `cmd+shift+u` / `ctrl+shift+u` to search for text within files,
 - `cmd+shift+ctrl+u` / `ctrl+shift+alt+u` to search for text within files with type pre-filtering,
 - `cmd+2` / `ctrl+2` to insert file path at cursor,
-- `cmd+3` / `ctrl+3` to extract file references from the current file,
-- `cmd+4` / `ctrl+4` to copy a line range reference to clipboard.
+- `cmd+3` / `ctrl+3` to copy a line range reference to clipboard.
+- `cmd+4` / `ctrl+4` to extract file references from the current file,
 
 You can change these using VS Code's keyboard shortcuts.
 
@@ -111,10 +111,11 @@ This extension facilitates a streamlined workflow for creating AI prompts with c
 
 1. **Create a prompt document** - Start with a document where you'll write your prompt to the AI
 2. **Reference files** - Use the "Link file" command (cmd+2/ctrl+2) to quickly insert file references in `${path}` format
-3. **Reference line ranges** - Use the "Copy line range reference" command (cmd+4/ctrl+4) to copy specific code sections
-4. **Compile the prompt** - Use the "Extract file references" command (cmd+3/ctrl+3) to generate a complete prompt with all referenced code
+3. **Reference line ranges** - Use the "Copy line range reference" command (cmd+3/ctrl+3) to copy specific code sections
+4. **Compile the prompt** - Use the "Extract file references" command (cmd+4/ctrl+4) to generate a complete prompt with all referenced code
 
 The compiled prompt file will have:
+
 - All file paths simplified to just filenames (e.g., `${file.ts}` instead of `${/path/to/file.ts}`)
 - A "File References" section appended with all referenced file contents
 - Proper language syntax highlighting for each code block based on file extension

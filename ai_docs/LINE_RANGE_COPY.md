@@ -4,4 +4,4 @@ The goal of this command is to be able to quickly collect an appendix of referen
 It works by:
 
 - Select a ${src/test/install_deps.sh} block of text in a file
-- Press Cmd+4 and it will insert into the clipboard a reference to the file and the lines that are selected.
+- Press Cmd+3 and it will insert into the clipboard a reference to the file and the lines that are selected.

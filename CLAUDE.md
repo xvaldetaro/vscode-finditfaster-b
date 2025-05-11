@@ -39,6 +39,7 @@ I've also added a companion CLI tool to process documents with embedded file pat
    - Code blocks use appropriate language hints for syntax highlighting based on file extension
 
 Usage:
+
 ```
 node out/extract_references.js <source_file> <target_file>
 ```
@@ -48,6 +49,7 @@ The tool is registered as a binary in package.json and can be installed globally
 ### Testing in Development Window Issue
 
 The extension doesn't work properly in the VS Code extension development window because:
+
 - The development window doesn't have a proper workspace/project path
 - Without a workspace context, the extension falls back to searching the root directory
 - This causes issues with file path resolution and temporary file handling
@@ -72,17 +74,19 @@ I've also integrated the extract references tool as a VS Code command:
 1. Added a command "AI Prompt Compiler: extract file references" in the extension
 2. Implemented the command to run the extract_references.ts script on the currently edited file
 3. It generates a target file with the same name as the source file but with ".prompt" added before the extension
-4. Added a keyboard shortcut (cmd+3 on Mac, ctrl+3 on Windows/Linux)
+4. Added a keyboard shortcut (cmd+4 on Mac, ctrl+4 on Windows/Linux)
 5. Enhanced the script to support both absolute and relative paths in ${} notation
 6. The command respects the linkFile.pathFormat setting ('absolute' or 'relative')
+   ${/Users/xvaldetaro/dev/vscode-finditfaster-b/CLAUDE.md[76-78]}
 7. When 'relative' mode is active, it passes the base path to the script
 
 This command allows you to easily extract file references from any document by simply pressing the shortcut key while editing the file. It makes it convenient to use the extract references tool without having to manually run the CLI command.
 
 The extract references tool now works with:
+
 - Absolute paths (e.g., `${/path/to/file.ts}`)
 - Relative paths (e.g., `${src/file.ts}`)
-- Line range references (e.g., `${/path/to/file.ts[10-20]}`) created using the line range copy command (cmd+4)
+- Line range references (e.g., `${/path/to/file.ts[10-20]}`) created using the line range copy command (cmd+3)
 - Uses the same base path configuration as the "link file" command for consistency
 
-When using line range references with cmd+3 (extract references), the tool will only extract the specified line range from the file, rather than the entire file content.
+When using line range references with cmd+4 (extract references), the tool will only extract the specified line range from the file, rather than the entire file content.
