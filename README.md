@@ -16,7 +16,8 @@ Default key bindings:
 - `cmd+shift+u` / `ctrl+shift+u` to search for text within files,
 - `cmd+shift+ctrl+u` / `ctrl+shift+alt+u` to search for text within files with type pre-filtering,
 - `cmd+2` / `ctrl+2` to insert file path at cursor,
-- `cmd+3` / `ctrl+3` to extract file references from the current file.
+- `cmd+3` / `ctrl+3` to extract file references from the current file,
+- `cmd+4` / `ctrl+4` to copy a line range reference to clipboard.
 
 You can change these using VS Code's keyboard shortcuts.
 
@@ -38,7 +39,7 @@ This plugin is useful if you deal with very large projects with lots of files (w
 search functionality quite slow), or when you simply love using `fzf` and `rg` and would like to
 bring those tools inside VS Code, similar to how the excellent `fzf.vim` plugin works for Vim.
 
-This extension exposes six commands:
+This extension exposes seven commands:
 
 1. Search for files and open them. Uses a combination of `fzf`, `rg`, and `bat`.
 2. Search within files for text and open them. Uses a combination of `fzf`, `rg`, and `bat`.
@@ -46,6 +47,7 @@ This extension exposes six commands:
 4. Link file - search for a file and insert its path at the cursor position. Can be configured to use absolute or relative paths in settings.
 5. Resume search. Repeats the last run command with the previous query prepopulated.
 6. Extract references - processes a file containing file paths in backticks, creates a new file with the same name plus `.prompt` extension that includes the contents of all referenced files.
+7. Line range copy - copies a reference to the selected line range in the format `${/path/to/file.ext[33-45]}` to the clipboard. If no text is selected, it will just copy the file path as `${/path/to/file.ext}`.
 
 If your active text editor has a selection, it will be used as the initial query (you can disable
 this setting).

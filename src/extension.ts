@@ -87,6 +87,12 @@ const commands: { [key: string]: Command } = {
         preRunCallback: undefined,
         postRunCallback: undefined,
     },
+    lineRangeCopy: {
+        script: 'line_range_copy', // This is a dummy script name since we'll handle everything in the extension
+        uri: undefined,
+        preRunCallback: undefined,
+        postRunCallback: undefined,
+    },
 };
 
 type WhenCondition = 'always' | 'never' | 'noWorkspaceOnly';
@@ -221,6 +227,7 @@ interface Config {
     isLinkFileMode: boolean,
     linkFilePathFormat: PathFormat,
     linkFileBasePath: string,
+    isLineRangeCopyMode: boolean,
 };
 const CFG: Config = {
     extensionName: undefined,
@@ -268,6 +275,7 @@ const CFG: Config = {
     isLinkFileMode: false,
     linkFilePathFormat: 'absolute',
     linkFileBasePath: '',
+    isLineRangeCopyMode: false,
 };
 
 /** Ensure that whatever command we expose in package.json actually exists */
@@ -927,6 +935,50 @@ async function executeExtractReferences() {
     setTimeout(() => clearInterval(checkFile), 10000);
 }
 
+/**
+ * Handle the lineRangeCopy command that copies a reference to the selected text in the format ${file_path[start_line-end_line]}
+ * If there is no selection, it will just copy the file path in the format ${file_path}
+ */
+async function executeLineRangeCopy() {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        vscode.window.showErrorMessage('No active editor found. Please open a file first.');
+        return;
+    }
+
+    const document = editor.document;
+    const selection = editor.selection;
+
+    // Get the file path
+    let filePath = document.uri.fsPath;
+
+    // Handle relative path if needed based on existing linkFile settings
+    if (CFG.linkFilePathFormat === 'relative') {
+        filePath = getRelativePath(filePath);
+    }
+
+    let formattedText;
+
+    // Check if there is a selection
+    if (selection && !selection.isEmpty) {
+        // Get the start and end line numbers (1-based line numbers)
+        const startLine = selection.start.line + 1;
+        const endLine = selection.end.line + 1;
+
+        // Create the formatted text with line range: ${/path/to/file.ext[33-45]}
+        formattedText = `\${${filePath}[${startLine}-${endLine}]}`;
+    } else {
+        // No selection, just copy the file path: ${/path/to/file.ext}
+        formattedText = `\${${filePath}}`;
+    }
+
+    // Copy to clipboard
+    vscode.env.clipboard.writeText(formattedText);
+
+    // Show a notification
+    vscode.window.showInformationMessage(`Copied reference to clipboard: ${formattedText}`);
+}
+
 async function executeTerminalCommand(cmd: string) {
     getIgnoreGlobs();
     if (!CFG.flightCheckPassed && !CFG.disableStartupChecks) {
@@ -938,6 +990,12 @@ async function executeTerminalCommand(cmd: string) {
     // Special case for extract references command
     if (cmd === "extractReferences") {
         executeExtractReferences();
+        return;
+    }
+
+    // Special case for lineRangeCopy command
+    if (cmd === "lineRangeCopy") {
+        executeLineRangeCopy();
         return;
     }
 

@@ -38,7 +38,8 @@
     "onCommand:find-it-faster.findWithinFilesWithType",
     "onCommand:find-it-faster.linkFile",
     "onCommand:find-it-faster.listSearchLocations",
-    "onCommand:find-it-faster.extractReferences"
+    "onCommand:find-it-faster.extractReferences",
+    "onCommand:find-it-faster.lineRangeCopy"
   ],
   "main": "./out/extension.js",
   "bin": {
@@ -77,6 +78,10 @@
       {
         "command": "find-it-faster.extractReferences",
         "title": "Find It Faster: extract file references"
+      },
+      {
+        "command": "find-it-faster.lineRangeCopy",
+        "title": "Find It Faster: copy line range reference to clipboard"
       }
     ],
     "keybindings": [
@@ -106,6 +111,12 @@
         "mac": "cmd+3",
         "linux": "ctrl+3",
         "win": "ctrl+3"
+      },
+      {
+        "command": "find-it-faster.lineRangeCopy",
+        "mac": "cmd+4",
+        "linux": "ctrl+4",
+        "win": "ctrl+4"
       }
     ],
     "configuration": {
