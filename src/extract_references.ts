@@ -64,27 +64,40 @@ async function extractReferences(sourceFilePath: string, targetFilePath: string,
 
         // Replace ${path} patterns with just the filenames
         // Find all paths enclosed in ${} using regex - handle both absolute (/path/to/file) and relative (path/to/file) paths
-        const pathRegex = /\${([^}]+)}/g;
+        // Also handle line range references in the format ${path[start-end]}
+        const pathRegex = /\${([^}\[]+)(?:\[(\d+)-(\d+)\])?}/g;
         let match;
         const embeddedPaths: string[] = [];
+        const lineRanges: Map<string, {start: number, end: number}> = new Map();
 
         // Find all embedded paths
         while ((match = pathRegex.exec(sourceContent)) !== null) {
             const pathFromMatch = match[1];
+            const startLine = match[2] ? parseInt(match[2]) : undefined;
+            const endLine = match[3] ? parseInt(match[3]) : undefined;
 
             // Determine if this is a path and not just a code snippet or interpolation
             // Very basic heuristic: if it has file extension and no obvious code characters like (){}=
             if (path.extname(pathFromMatch) && !/[(){};=]/.test(pathFromMatch)) {
                 embeddedPaths.push(pathFromMatch);
+
+                // Store line ranges if they exist
+                if (startLine !== undefined && endLine !== undefined) {
+                    lineRanges.set(pathFromMatch, {start: startLine, end: endLine});
+                }
             }
         }
 
         // Create the target content with replaced paths
-        let targetContent = sourceContent.replace(pathRegex, (match, filePath) => {
+        let targetContent = sourceContent.replace(pathRegex, (match, filePath, startLine, endLine) => {
             // Only replace if it's a file path we've identified
             if (embeddedPaths.includes(filePath)) {
                 const fileName = path.basename(filePath);
-                return `\${${fileName}}`;
+                if (startLine && endLine) {
+                    return `\${${fileName}[${startLine}-${endLine}]}`;
+                } else {
+                    return `\${${fileName}}`;
+                }
             }
             // Return unchanged if not a file path
             return match;
@@ -110,9 +123,26 @@ async function extractReferences(sourceFilePath: string, targetFilePath: string,
                 const fileName = path.basename(filePath);
                 const languageHint = getLanguageHint(filePath);
 
+                // Check if we have a line range for this file
+                let contentToInclude = fileContent;
+                let headerSuffix = '';
+
+                if (lineRanges.has(filePath)) {
+                    const range = lineRanges.get(filePath)!;
+                    const lines = fileContent.split('\n');
+
+                    // Adjust for 1-based line numbers (coming from the editor) to 0-based array indices
+                    const startIdx = Math.max(0, range.start - 1);
+                    const endIdx = Math.min(lines.length, range.end);
+
+                    // Extract only the specified line range
+                    contentToInclude = lines.slice(startIdx, endIdx).join('\n');
+                    headerSuffix = ` (lines ${range.start}-${range.end})`;
+                }
+
                 // Add file section to the target content with language hint for syntax highlighting
                 const codeBlock = languageHint ? `\`\`\`${languageHint}` : '```';
-                targetContent += `\n## ${fileName} contents\n\n${codeBlock}\n${fileContent}\n\`\`\`\n`;
+                targetContent += `\n## ${fileName}${headerSuffix} contents\n\n${codeBlock}\n${contentToInclude}\n\`\`\`\n`;
             } catch (error) {
                 console.warn(`Warning: Unable to read file: ${resolvedPath} (original: ${filePath})`);
             }

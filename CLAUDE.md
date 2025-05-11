@@ -82,4 +82,7 @@ This command allows you to easily extract file references from any document by s
 The extract references tool now works with:
 - Absolute paths (e.g., `${/path/to/file.ts}`)
 - Relative paths (e.g., `${src/file.ts}`)
+- Line range references (e.g., `${/path/to/file.ts[10-20]}`) created using the line range copy command (cmd+4)
 - Uses the same base path configuration as the "link file" command for consistency
+
+When using line range references with cmd+3 (extract references), the tool will only extract the specified line range from the file, rather than the entire file content.
